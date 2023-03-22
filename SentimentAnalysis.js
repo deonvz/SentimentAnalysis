@@ -1,0 +1,48 @@
+let sentiment;
+let statusEl;
+let submitBtn;
+let inputBox;
+let sentimentResult;
+let sentimenttext;
+
+function setup() {
+  noCanvas();
+  // initialize sentiment
+  sentiment = ml5.sentiment('movieReviews', modelReady);
+
+  // setup the html environment
+  statusEl = createP('Loading Model...');
+  inputBox = createInput('Today is the happiest day and is full of rainbows!');
+  inputBox.attribute('size', '75');
+  submitBtn = createButton('submit');
+  sentimentResult = createP('sentiment score:');
+
+  // predicting the sentiment on mousePressed()
+  submitBtn.mousePressed(getSentiment);
+}
+
+function getSentiment() {
+  // get the values from the input
+  const text = inputBox.value();
+
+  // make the prediction
+  const prediction = sentiment.predict(text);
+
+	if (prediction.score <= 0.4){
+	  sentimenttext = "Negative :( ";
+  }
+  if(prediction.score >= 0.6){
+  	sentimenttext = "Positive :)";
+  }
+  if(prediction.score == 0.5){
+  	sentimenttext = "Neutral :|";
+  }
+
+  // display sentiment result on html page
+  sentimentResult.html('Sentiment score: ' + prediction.score + ' <b>'+ sentimenttext + '</b>');
+}
+
+function modelReady() {
+  // model is ready
+  statusEl.html('model loaded');
+}
